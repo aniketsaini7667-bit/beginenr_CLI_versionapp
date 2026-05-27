@@ -55,7 +55,11 @@ def see_all_note():
         print("empty note".upper())
       else:
         f.seek(0)
-        print(f.read())
+        print("=".center(50,"="))
+        line= f.readlines()
+        for i in line:
+          print(f"{"|"}{i.ljust(10-len(i)," ")}{"-".center(50,"-")}")
+        print("=".center(50,"="))
   except:
     print("empty - empty - empty note hasn't crated")
       
@@ -89,6 +93,7 @@ def delete_note_file():
       if conform=="Y":
         import os
         os.remove(path)
+        print("note file deleted")
       else:
         print("note file is not deleted")  
 
