@@ -1,4 +1,4 @@
-# this project is a note taking CLI version and save them in file on note.txt
+# This project is a note-taking CLI version that saves notes to a file named note.txt
 
 import random 
 import os
@@ -15,19 +15,22 @@ class Notefile:
                "See file path",
                "Delete note file",
                "show random notes"]
-    self.menu_lenth=len(self.menu_item)
+    self.menu_length=len(self.menu_item)
+    self.file_not_found= "file is not even created yet please first add some notes to the file"
     
-
+  def open_file(self):
+    with open(self.path,"r") as e:
+      self.line=e.readlines()
+    return self.line
 
 
   def add_note(self):
     try:
-      with open(self.path,"r") as a:
-        line=a.readlines()
-        count=len(line)+1
+      self.open_file()
+      count=len(self.line)+1
     except:
       print("file not found ")
-      print("crating a new file name note.txt in same folder")
+      print("creating a new file name note.txt in same folder")
       count=1
     topic=input(f"enter topic name {count} :".title()).strip()
     note=input("enter note :".title()).strip()
@@ -35,50 +38,51 @@ class Notefile:
     with open(self.path,"a") as f:
       f.write(f"{count}|{topic}|{note}\n")
     return 
+  
+
   def remove_note(self):
     try:
-      with open(self.path,"r")as f:
-        line=f.readlines()
-        lenth=len(line)
-        remove=input("enter the topic number :".title())
+      self.open_file()
+      length=len(self.line)
+      remove=input("enter the topic number :".title())
       if not remove.isdigit():
         print("input must be a number ")
         return
       remove=int(remove)
-      if remove<=lenth:
-        remove_line=line[remove-1]
-        del line[remove-1]
-        print(f"this topic got removet : {remove_line} ")
+      if remove<=length:
+        remove_line=self.line[remove-1]
+        del self.line[remove-1]
+        print(f"this topic got removed : {remove_line} ")
         storage=[]
-        for i in range(0,len(line)):
-          part=line[i].split("|")
+        for i in range(0,len(self.line)):
+          part=self.line[i].split("|")
           sec=part[1]
-          thirt=part[2]
-          new_line=f"{i+1}|{sec}|{thirt}"
+          third=part[2]
+          new_line=f"{i+1}|{sec}|{third}"
           storage.append(new_line)
-          with open(self.path,"w") as f:
-            f.writelines(storage)
+        with open(self.path,"w") as f:
+          f.writelines(storage)
       else:
-        print("line not fount ")
+        print("line not found ")
 
     except:
-      print("file hasn't even created please add some note first")
+      print(self.file_not_found)
 
         
       
   def see_all_note(self):
     try:
-      with open(self.path,"r") as f:
-        line= f.readlines()
-        lenth=len(line)
-        if lenth == 0:
-          print("empty note".upper())
-        else:
-          f.seek(0)
-          print(f.read())
+      self.open_file()
+      length=len(self.line)
+      if length == 0:
+        print("empty note".upper())
+      else:
+        note_view="".join(self.line)
+        print(note_view)
     except:
-      print("empty - empty - empty note hasn't crated")
-        
+      print(self.file_not_found)
+
+
   def search_topic(self):
     search= input("enter topic number :")
     if not search.isdigit():
@@ -86,90 +90,93 @@ class Notefile:
       return
     search=int(search)
     try:
-      with open(self.path,"r") as f:
-        line=f.readlines()
-        lenth=(len(line))
-        if lenth>=search>=1 :
-          print(line[search-1])
-          print("here you go")
-        else:
-          print("data not avalible ")
+      self.open_file()
+      length=(len(self.line))
+      if length>=search>=1 :
+        print(self.line[search-1])
+        print("here you go")
+      else:
+        print("data not available ")
     except:
-      print("empty :- please add note first")
+      print(self.file_not_found)
+
 
   def delete_note_file(self):
     try:
-      with open(self.path,"r") as f:
-        line=f.readlines()
-        lenth=len(line)
-      if lenth==0:
+      self.open_file()
+      length=len(self.line)
+      if length==0:
         print("note file is already empty")
       else:
-        conform=input("are you sure you want to delete the note file ? (y/n) :").title()
-        if conform in ["Y","Yes"]:
+        confirm=input("are you sure you want to delete the note file ? (y/n) :").title()
+        if confirm in ["Y","Yes"]:
           os.remove(self.path)
           print("note file got deleted ")
         else:
           print("note file is not deleted")  
-
     except:
-      print("note file hasn't even created")
+      print(self.file_not_found)
 
   
   def random_note(self):
     try:
-      with open(self.path,"r") as e:
-        line= e.readlines()
-        if len(line)==0:
-          print("you don't have a note created yet")
-        else:
-          output=random.choice(line)
-          print(output)
+      self.open_file()
+      if len(self.line)==0:
+        print(self.file_not_found)
+      else:
+        output=random.choice(self.line)
+        print(output)
     except:
-      print("note file havent created yet")
+      print(self.file_not_found)
+
+
+  def path_name(self):
+    if os.path.exists(self.path):
+      full_path=os.path.abspath(self.path)
+      print(full_path, "go to this location in your file to get the file ".title())   
+    else:
+      print(self.file_not_found)
+      
 
 
   def menu(self):
     for i,menu in enumerate(self.menu_item):
       print(f"|{i} -> {menu}")
 
+  
 
-go=Notefile()
+    
+
+
+app=Notefile()
+
+dist_choise={
+      1: app.add_note,
+      2: app.remove_note,
+      3: app.see_all_note,
+      4: app.search_topic,
+      5: app.path_name,
+      6: app.delete_note_file,
+      7: app.random_note,
+    }
+  
 while True:
-  go.menu()
-  choice= input("enter you choice number :".strip())
-  if choice.isdigit():
-    choice=int(choice)
-    if choice==0:
-      print("thankyou for using this app")
+  app.menu()
+  choise= input("enter you choice number :").strip()
+  if choise.isdigit():
+    choise=int(choise)
+    if choise ==0:
+      print("thank you for using this app")
       break
-    elif choice==1:
-      go.add_note()
-      continue
-    elif choice==2:
-      go.remove_note()
-      continue
-    elif choice==3:
-      go.see_all_note()
-      continue
-    elif choice==4:
-      go.search_topic()
-      continue
-    elif choice==5:
-      try:
-        with open(go.path,"r") as f:
-          f.seek(0)
-          print(go.path, "go to this location in your file to get the file ".title())
-          continue
-      except:
-        print("file is not even created ")
-        continue
-    elif choice==6:
-      go.delete_note_file()
-      continue
-    elif choice==7:
-      go.random_note()
     else:
-      print(f"only the number 0--{go.menu_lenth} allowed")
+      if choise in dist_choise.keys():
+        action=dist_choise.get(choise)
+        action()
+        continue
+      else:
+        print(f"{choise} is not avilible on the menu ")
+        continue
   else:
-    print("only positive number allowed")
+    print(f"please input only number b/w 0--{app.menu_length-1}")
+    continue
+  
