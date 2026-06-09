@@ -18,7 +18,7 @@ class Notefile:
     self.menu_length=len(self.menu_item)
     self.file_not_found= "file is not even created yet please first add some notes to the file"
     
-  def open_file(self):
+  def __open_file(self):
     with open(self.path,"r") as e:
       self.line=e.readlines()
     return self.line
@@ -26,7 +26,7 @@ class Notefile:
 
   def add_note(self):
     try:
-      self.open_file()
+      self.__open_file()
       count=len(self.line)+1
     except:
       print("file not found ")
@@ -42,7 +42,7 @@ class Notefile:
 
   def remove_note(self):
     try:
-      self.open_file()
+      self.__open_file()
       length=len(self.line)
       remove=input("enter the topic number :".title())
       if not remove.isdigit():
@@ -72,7 +72,7 @@ class Notefile:
       
   def see_all_note(self):
     try:
-      self.open_file()
+      self.__open_file()
       length=len(self.line)
       if length == 0:
         print("empty note".upper())
@@ -90,7 +90,7 @@ class Notefile:
       return
     search=int(search)
     try:
-      self.open_file()
+      self.__open_file()
       length=(len(self.line))
       if length>=search>=1 :
         print(self.line[search-1])
@@ -103,7 +103,7 @@ class Notefile:
 
   def delete_note_file(self):
     try:
-      self.open_file()
+      self.__open_file()
       length=len(self.line)
       if length==0:
         print("note file is already empty")
@@ -120,7 +120,7 @@ class Notefile:
   
   def random_note(self):
     try:
-      self.open_file()
+      self.__open_file()
       if len(self.line)==0:
         print(self.file_not_found)
       else:
