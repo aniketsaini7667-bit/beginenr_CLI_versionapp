@@ -1,5 +1,5 @@
 # This project is a note-taking CLI version that saves notes to a file named note.txt
-
+import datetime
 import random 
 import os
 
@@ -16,6 +16,8 @@ class Notefile:
                "Delete note file",
                "show random notes"]
     self.menu_length=len(self.menu_item)
+    date_time= datetime.datetime.now()
+    self.date_time= date_time.strftime(" Date : %d-%m-%Y , Time : %H:%M:%S ".center(46,"🥰"))
     self.file_not_found= "file is not even created yet please first add some notes to the file"
     
   def __open_file(self):
@@ -50,21 +52,28 @@ class Notefile:
         return
       remove=int(remove)
       if remove<=length:
-        remove_line=self.line[remove-1]
-        del self.line[remove-1]
-        print(f"this topic got removed : {remove_line} ")
-        storage=[]
-        for i in range(0,len(self.line)):
-          part=self.line[i].split("|")
-          sec=part[1]
-          third=part[2]
-          new_line=f"{i+1}|{sec}|{third}"
-          storage.append(new_line)
-        with open(self.path,"w") as f:
-          f.writelines(storage)
+        sure= input(f"{self.line[remove-1]}\n Do you want to delete above topic [Y/N] : ").strip().title()
+        if sure in ["Y","Yes"]:
+          remove_line=self.line[remove-1]
+          del self.line[remove-1]
+          print(f"this topic got removed : {remove_line} ")
+          storage=[]
+          for i in range(0,len(self.line)):
+            part=self.line[i].split("|")
+            sec=part[1]
+            third=part[2]
+            new_line=f"{i+1}|{sec}|{third}"
+            storage.append(new_line)
+          with open(self.path,"w") as f:
+            f.writelines(storage)
+        elif sure in ["N","NO"]:
+          print("The note is safe and note got deleted")
+          return
+        else:
+          print("please enter from given option")
+          return
       else:
         print("line not found ")
-
     except:
       print(self.file_not_found)
 
@@ -149,7 +158,7 @@ class Notefile:
 
 
 app=Notefile()
-
+print(app.date_time)
 dist_choise={
       1: app.add_note,
       2: app.remove_note,
